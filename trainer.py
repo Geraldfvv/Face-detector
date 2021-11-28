@@ -81,10 +81,10 @@ def trainModel(method,faces,labels):
     recognizer.write("./Models/"+method+".xml")
 
 
-videoProcessing(haarcasde,'Andrey','Enojado')
-#videoProcessing(haarcasde,'Gerald','Feliz')
-#videoProcessing(haarcasde,'Gerald','Triste')
-#videoProcessing(haarcasde,'Gerald','Neutro')
+#videoProcessing(haarcasde,'Andrey','Enojado')
+#videoProcessing(haarcasde,'Andrey','Feliz')
+#videoProcessing(haarcasde,'Andrey','Triste')
+videoProcessing(haarcasde,'Andrey','Neutro')
 
 #facesProcessing('Gerald')
 
