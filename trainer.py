@@ -25,12 +25,17 @@ under certain conditions.
 import cv2 as cv
 import os
 import imutils
+import numpy as np
 
 # Obtenido del repositorio código abierto de OpenCV https://github.com/opencv/opencv/tree/4.x/data
 haarcasde = cv.CascadeClassifier('./Models/haarcascade.xml')
 ibpcascade = cv.CascadeClassifier('./Models/ibpcascade.xml')
    
-def video_processing(classifier,path):
+def videoProcessing(classifier,person,emotion):
+    path = './Data/'+person+'/'+emotion
+    if not os.path.exists(path):
+        os.makedirs(path)
+
     capture = cv.VideoCapture(0,cv.CAP_DSHOW)
     faceCount = 0
     while True :
@@ -38,27 +43,48 @@ def video_processing(classifier,path):
         if ret == False: break
         frame =  imutils.resize(frame, width=640)
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        auxFrame = frame.copy()
 
         extractor = classifier.detectMultiScale(gray,1.3,5)
         for (x,y,w,h) in extractor:
             cv.rectangle(0,(x,y),(x+w , y+h),(0,255,0),2)
-            face = auxFrame[y:y+h,x:x+w]
+            face = frame[y:y+h,x:x+w]
             face = cv.resize(face,(150,150),interpolation=cv.INTER_CUBIC)
-            cv.imwrite(path + '/face_{}.jpg'.format(faceCount),face)
+            cv.imwrite('./Data/'+person+'/'+emotion +'/face_{}.jpg'.format(faceCount),face)
             faceCount = faceCount + 1
         cv.imshow('frame',frame)
         
         k =  cv.waitKey(1)
         if k == 27 or faceCount >= 200:
-            break
+            break           
 
-def main(classfier,person,emotion):
-    path = './Data/'+person+'/'+emotion
-    if not os.path.exists(path):
-        os.makedirs(path)
-    video_processing(classfier,path)
+def facesProcessing(person):
+    labels = []
+    faces = []
+    label = 0
+    for emotion in os.listdir('./Data/'+person):
+        for fileName in os.listdir('./Data/'+person+"/"+emotion):
+            labels.append(label)
+            faces.append(cv.imread('./Data/'+person+"/"+emotion+'/'+fileName,0))
+        label = label + 1
+    trainModel('EigenFaces',faces,labels)
+    trainModel('LBPH',faces,labels)
 
-main(haarcasde,'Gerald','Feliz')
+# Method    :   1 = EigenFaces  2 = LBPH
+# Path      :   ./Data/Person/Emotion                                                         
+def trainModel(method,faces,labels):
+    if method == 'EigenFaces' :
+        recognizer = cv.face.EigenFaceRecognizer_create()
+    if method == 'LBPH' :
+        recognizer = cv.face.LBPHFaceRecognizer_create()
+    recognizer.train(faces,np.array(labels))
+    recognizer.write("./Models/"+method+".xml")
+
+
+#videoProcessing(haarcasde,'Gerald','Enojado')
+#videoProcessing(haarcasde,'Gerald','Feliz')
+#videoProcessing(haarcasde,'Gerald','Triste')
+#videoProcessing(haarcasde,'Gerald','Neutro')
+
+facesProcessing('Gerald')
 
 
