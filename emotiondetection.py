@@ -27,8 +27,8 @@ import os
 import imutils
 
 # Obtenido del repositorio código abierto de OpenCV https://github.com/opencv/opencv/tree/4.x/data
-haarcasde = cv.CascadeClassifier('haarcascade.xml')
-ibpcascade = cv.CascadeClassifier('ibpcascade.xml')
+haarcasde = cv.CascadeClassifier('./Models/haarcascade.xml')
+ibpcascade = cv.CascadeClassifier('./Models/ibpcascade.xml')
    
 def video_processing(classifier,path):
     capture = cv.VideoCapture(0,cv.CAP_DSHOW)
@@ -52,7 +52,6 @@ def video_processing(classifier,path):
         k =  cv.waitKey(1)
         if k == 27 or faceCount >= 200:
             break
-    
 
 def main(classfier,person,emotion):
     path = './Data/'+person+'/'+emotion
