@@ -57,16 +57,16 @@ def videoProcessing(classifier,person,emotion):
         if k == 27 or faceCount >= 200:
             break           
 
-def facesProcessing(person):
+def facesProcessing():
     labels = []
     faces = []
     label = 0
-    for person in os.listdir('./Data/'):
-        for emotion in os.listdir('./Data/'+person):
-            for fileName in os.listdir('./Data/'+person+"-"+emotion):
-                labels.append(label)
-                faces.append(cv.imread('./Data/'+person+"-"+emotion+'/'+fileName,0))
-            label = label + 1
+    for emotion in os.listdir('./Data/'):
+        for fileName in os.listdir('./Data/'+emotion):
+            labels.append(label)
+            faces.append(cv.imread('./Data/'+emotion+'/'+fileName,0))
+        label = label + 1
+        
     trainModel('EigenFaces',faces,labels)
     trainModel('LBPH',faces,labels)
 
@@ -81,11 +81,11 @@ def trainModel(method,faces,labels):
     recognizer.write("./Models/"+method+".xml")
 
 
-videoProcessing(haarcasde,'Andrey','Enojado')
+#videoProcessing(haarcasde,'Gerald','Enojado')
 #videoProcessing(haarcasde,'Gerald','Feliz')
 #videoProcessing(haarcasde,'Gerald','Triste')
 #videoProcessing(haarcasde,'Gerald','Neutro')
 
-#facesProcessing('Gerald')
+facesProcessing()
 
 
