@@ -32,7 +32,7 @@ haarcasde = cv.CascadeClassifier('./Models/haarcascade.xml')
 ibpcascade = cv.CascadeClassifier('./Models/ibpcascade.xml')
    
 def videoProcessing(classifier,person,emotion):
-    path = './Data/'+person+'/'+emotion
+    path = './Data/'+person+'-'+emotion
     if not os.path.exists(path):
         os.makedirs(path)
 
@@ -49,7 +49,7 @@ def videoProcessing(classifier,person,emotion):
             cv.rectangle(0,(x,y),(x+w , y+h),(0,255,0),2)
             face = frame[y:y+h,x:x+w]
             face = cv.resize(face,(150,150),interpolation=cv.INTER_CUBIC)
-            cv.imwrite('./Data/'+person+'/'+emotion +'/face_{}.jpg'.format(faceCount),face)
+            cv.imwrite('./Data/'+person+'-'+emotion +'/face_{}.jpg'.format(faceCount),face)
             faceCount = faceCount + 1
         cv.imshow('frame',frame)
         
@@ -61,11 +61,12 @@ def facesProcessing(person):
     labels = []
     faces = []
     label = 0
-    for emotion in os.listdir('./Data/'+person):
-        for fileName in os.listdir('./Data/'+person+"/"+emotion):
-            labels.append(label)
-            faces.append(cv.imread('./Data/'+person+"/"+emotion+'/'+fileName,0))
-        label = label + 1
+    for person in os.listdir('./Data/'):
+        for emotion in os.listdir('./Data/'+person):
+            for fileName in os.listdir('./Data/'+person+"-"+emotion):
+                labels.append(label)
+                faces.append(cv.imread('./Data/'+person+"-"+emotion+'/'+fileName,0))
+            label = label + 1
     trainModel('EigenFaces',faces,labels)
     trainModel('LBPH',faces,labels)
 
@@ -80,11 +81,11 @@ def trainModel(method,faces,labels):
     recognizer.write("./Models/"+method+".xml")
 
 
-#videoProcessing(haarcasde,'Gerald','Enojado')
+videoProcessing(haarcasde,'Andrey','Enojado')
 #videoProcessing(haarcasde,'Gerald','Feliz')
 #videoProcessing(haarcasde,'Gerald','Triste')
 #videoProcessing(haarcasde,'Gerald','Neutro')
 
-facesProcessing('Gerald')
+#facesProcessing('Gerald')
 
 
